@@ -307,7 +307,7 @@ class TestWithTelemetryIOLatency(IorTestBase, TestWithTelemetry):
                 self.ior_cmd.flags.update(flags)
                 self.ior_cmd.set_daos_params(
                     self.server_group, self.pool, self.container[-1].uuid)
-                # Run ior command
+                # Run ior command - add function for this
                 ior_results = self.run_ior_with_pool(
                         timeout=200, create_pool=False, create_cont=False)
                 ior_latency[transfer_size][operation] = self.get_ior_latency(ior_results)
