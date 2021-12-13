@@ -34,7 +34,7 @@ import (
 	"github.com/daos-stack/daos/src/control/system"
 )
 
-func processConfig(log *logging.LeveledLogger, cfg *config.Server) (*system.FaultDomain, error) {
+func processConfig(log logging.Logger, cfg *config.Server) (*system.FaultDomain, error) {
 	err := cfg.Validate(log)
 	if err != nil {
 		return nil, errors.Wrapf(err, "%s: validation failed", cfg.Path)
@@ -70,7 +70,7 @@ func processConfig(log *logging.LeveledLogger, cfg *config.Server) (*system.Faul
 
 // server struct contains state and components of DAOS Server.
 type server struct {
-	log         *logging.LeveledLogger
+	log         logging.Logger
 	cfg         *config.Server
 	hostname    string
 	runningUser string
@@ -94,7 +94,7 @@ type server struct {
 	onShutdown       []func()
 }
 
-func newServer(ctx context.Context, log *logging.LeveledLogger, cfg *config.Server, faultDomain *system.FaultDomain) (*server, error) {
+func newServer(ctx context.Context, log logging.Logger, cfg *config.Server, faultDomain *system.FaultDomain) (*server, error) {
 	hostname, err := os.Hostname()
 	if err != nil {
 		return nil, errors.Wrap(err, "get hostname")
@@ -411,7 +411,7 @@ func (srv *server) start(ctx context.Context, shutdown context.CancelFunc) error
 }
 
 // Start is the entry point for a daos_server instance.
-func Start(log *logging.LeveledLogger, cfg *config.Server) error {
+func Start(log logging.Logger, cfg *config.Server) error {
 	faultDomain, err := processConfig(log, cfg)
 	if err != nil {
 		return err

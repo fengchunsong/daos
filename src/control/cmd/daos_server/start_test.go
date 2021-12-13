@@ -249,7 +249,7 @@ func TestStartOptions(t *testing.T) {
 
 			var gotConfig *config.Server
 			var opts mainOpts
-			opts.Start.start = func(log *logging.LeveledLogger, cfg *config.Server) error {
+			opts.Start.start = func(log logging.Logger, cfg *config.Server) error {
 				gotConfig = cfg
 				return nil
 			}
@@ -326,7 +326,7 @@ func TestStartLoggingOptions(t *testing.T) {
 			log := logging.NewCombinedLogger(t.Name(), &logBuf)
 
 			var opts mainOpts
-			opts.Start.start = func(log *logging.LeveledLogger, cfg *config.Server) error {
+			opts.Start.start = func(log logging.Logger, cfg *config.Server) error {
 				return nil
 			}
 			opts.Start.config = genMinimalConfig()
@@ -386,7 +386,7 @@ func TestStartLoggingConfiguration(t *testing.T) {
 			log := logging.NewCombinedLogger(t.Name(), &logBuf)
 
 			var opts mainOpts
-			opts.Start.start = func(log *logging.LeveledLogger, cfg *config.Server) error {
+			opts.Start.start = func(log logging.Logger, cfg *config.Server) error {
 				return nil
 			}
 			opts.Start.config = tc.configFn(genMinimalConfig())
