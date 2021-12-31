@@ -621,7 +621,7 @@ class DaosServerManager(SubprocessManager):
             raise ServerFailed(
                 "Error obtaining {} output: {}".format(self.dmg, data))
         try:
-            states = list(set([data[rank]["state"] for rank in data]))
+            states = {data[rank]["state"] for rank in data}
         except KeyError as error:
             raise ServerFailed(
                 "Unexpected result from {} - missing 'state' key: {}".format(
@@ -631,7 +631,7 @@ class DaosServerManager(SubprocessManager):
             raise ServerFailed(
                 "Multiple system states ({}) detected:\n  {}".format(
                     states, data))
-        return states[0]
+        return states.pop()
 
     def check_system_state(self, valid_states, max_checks=1):
         """Check that the DAOS system state is one of the provided states.
