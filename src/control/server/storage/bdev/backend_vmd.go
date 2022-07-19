@@ -83,15 +83,13 @@ func mapVMDToBackingAddrs(foundCtrlrs storage.NvmeControllers) (map[string]*hard
 	return vmds, nil
 }
 
-// substVMDAddrs replaces VMD endpoint PCI addresses in input device list with the PCI
-// addresses of the backing devices behind the VMD endpoint.
+// substVMDAddrs replaces VMD PCI addresses in input device list with the PCI
+// addresses of the backing devices behind the VMD.
 //
 // Return new device list with PCI addresses of devices behind the VMD.
-//
-// Add addresses that are not VMD endpoints to the output list.
 func substVMDAddrs(inPCIAddrs *hardware.PCIAddressSet, foundCtrlrs storage.NvmeControllers) (*hardware.PCIAddressSet, error) {
 	if len(foundCtrlrs) == 0 {
-		return inPCIAddrs, nil
+		return nil, nil
 	}
 
 	vmds, err := mapVMDToBackingAddrs(foundCtrlrs)
@@ -99,8 +97,7 @@ func substVMDAddrs(inPCIAddrs *hardware.PCIAddressSet, foundCtrlrs storage.NvmeC
 		return nil, err
 	}
 
-	// Swap any input VMD endpoint addresses with respective backing device addresses.
-	// inAddr entries that are already backing device addresses will be added to output list.
+	// swap input vmd addresses with respective backing addresses
 	outPCIAddrs := new(hardware.PCIAddressSet)
 	for _, inAddr := range inPCIAddrs.Addresses() {
 		toAdd := []*hardware.PCIAddress{inAddr}
@@ -117,16 +114,12 @@ func substVMDAddrs(inPCIAddrs *hardware.PCIAddressSet, foundCtrlrs storage.NvmeC
 	return outPCIAddrs, nil
 }
 
-// substituteVMDAddresses wraps around substVMDAddrs to substitute VMD addresses with the relevant
-// backing device addresses.
-// Function takes a BdevScanResponse reference to derive address map and a logger.
+// substituteVMDAddresses wraps around substVMDAddrs and takes a BdevScanResponse
+// reference along with a logger.
 func substituteVMDAddresses(log logging.Logger, inPCIAddrs *hardware.PCIAddressSet, bdevCache *storage.BdevScanResponse) (*hardware.PCIAddressSet, error) {
-	if inPCIAddrs == nil {
-		return nil, errors.New("nil input PCIAddressSet")
-	}
 	if bdevCache == nil || len(bdevCache.Controllers) == 0 {
 		log.Debugf("no bdev cache to find vmd backing devices (devs: %v)", inPCIAddrs)
-		return inPCIAddrs, nil
+		return nil, nil
 	}
 
 	msg := fmt.Sprintf("vmd detected, processing addresses (input %v, existing %v)",
