@@ -42,7 +42,7 @@ class DaosCoreBase(TestWithServers):
 
         # if no client specified update self.hostlist_clients to local host
         # and create a new self.hostfile_clients.
-        if self.hostlist_clients is None:
+        if not self.hostlist_clients:
             self.hostlist_clients = include_local_host(self.hostlist_clients)
             self.hostfile_clients = write_host_file.write_host_file(
                 self.hostlist_clients, self.workdir, None)
@@ -174,9 +174,8 @@ class DaosCoreBase(TestWithServers):
         except process.CmdError as result:
             if result.result.exit_status != 0:
                 # fake a JUnit failure output
-                self.create_results_xml(self.subtest_name, result,
-                                        "Failed to run {}.".format(
-                    self.daos_test))
+                self.create_results_xml(
+                    self.subtest_name, result, "Failed to run {}.".format(self.daos_test))
                 self.fail(
                     "{0} failed with return code={1}.\n".format(
                         job_str, result.result.exit_status))
@@ -204,6 +203,6 @@ class DaosCoreBase(TestWithServers):
     </system-err>
   </testcase>
 </testsuite>'''.format(
-    testname, result.result.stdout_text, result.result.stderr_text, error_message))
+                    testname, result.result.stdout_text, result.result.stderr_text, error_message))
         except IOError as error:
             self.log.error("Error creating %s: %s", filename, error)

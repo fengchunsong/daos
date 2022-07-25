@@ -222,7 +222,7 @@ class TestPool(TestDaosApiBase):
         """
         try:
             return self.pool.get_uuid_str()
-        except AttributeError:
+        except (AttributeError, TypeError):
             return None
         except IndexError:
             return self.pool.uuid
@@ -668,7 +668,7 @@ class TestPool(TestDaosApiBase):
         if not done:
             raise DaosTestError(
                 "Pool Free space did not match: actual={},{} expected={},{}".format(
-                scm_fs, nvme_fs, expected_scm, expected_nvme))
+                    scm_fs, nvme_fs, expected_scm, expected_nvme))
 
         return done
 
@@ -815,7 +815,7 @@ class TestPool(TestDaosApiBase):
         """Check if pool files exist on the specified list of hosts.
 
         Args:
-            hosts (list): list of hosts
+            hosts (NodeSet): hosts on which to check files
 
         Returns:
             bool: True if the files for this pool exist on each host; False
@@ -966,7 +966,7 @@ class TestPool(TestDaosApiBase):
                 while True:
                     try:
                         self.query_data = self.dmg.pool_query(self.identifier, show_enabled,
-                                show_disabled)
+                                                              show_disabled)
                         break
                     except CommandFailure as error:
                         if end_time is not None:
@@ -981,8 +981,7 @@ class TestPool(TestDaosApiBase):
                                     "'pool/pool_query_timeout' test yaml "
                                     "parameter.".format(
                                         self.pool_query_timeout.value,
-                                        self.identifier)) \
-                                            from error
+                                        self.identifier)) from error
                         else:
                             raise CommandFailure(error) from error
             else:

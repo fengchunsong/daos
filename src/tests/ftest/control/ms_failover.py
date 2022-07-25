@@ -1,6 +1,6 @@
 #!/usr/bin/python
 """
-(C) Copyright 2021 Intel Corporation.
+(C) Copyright 2021-2022 Intel Corporation.
 
 SPDX-License-Identifier: BSD-2-Clause-Patent
 """
@@ -19,7 +19,7 @@ class ManagementServiceFailover(TestWithServers):
     """
 
     def __init__(self, *args, **kwargs):
-        """Inititialize a ManagementServiceFailover object."""
+        """Initialize a ManagementServiceFailover object."""
         super().__init__(*args, **kwargs)
         self.setup_start_servers = False
         self.start_servers_once = False
@@ -81,7 +81,7 @@ class ManagementServiceFailover(TestWithServers):
 
         """
         self.log.info("*** launching %d servers", replica_count)
-        replicas = random.sample(self.hostlist_servers, replica_count)
+        replicas = random.sample(list(self.hostlist_servers), replica_count)
         server_groups = {
             self.server_group:
                 {
