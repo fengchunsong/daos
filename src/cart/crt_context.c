@@ -902,6 +902,8 @@ crt_context_timeout_check(struct crt_context *crt_ctx)
 	uint64_t			 ts_now;
 
 	D_ASSERT(crt_ctx != NULL);
+	if(d_binheap_is_empty(&crt_ctx->cc_bh_timeout))
+		return;
 
 	D_INIT_LIST_HEAD(&timeout_list);
 	ts_now = d_timeus_secdiff(0);

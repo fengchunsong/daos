@@ -11,11 +11,11 @@ def scons():
     denv = env.Clone()
 
     denv.Append(CPPDEFINES=['-DDAOS_PMEM_BUILD'])
-    libraries = ['daos_common_pmem', 'gurt', 'cart', 'vos_srv']
+    libraries = ['jemalloc','daos_common_pmem', 'gurt', 'cart', 'vos_srv']
     libraries += ['bio', 'dl', 'uuid', 'pthread', 'abt']
     libraries += ['hwloc', 'pmemobj', 'protobuf-c', 'isal']
 
-    prereqs.require(denv, 'hwloc', 'argobots', 'protobufc', 'pmdk', 'isal')
+    prereqs.require(denv, 'jemalloc','hwloc', 'argobots', 'protobufc', 'pmdk', 'isal')
 
     # pylint: disable-next=wrong-spelling-in-comment
     # the "-rdynamic" is to allow other dll to refer symbol defined in
